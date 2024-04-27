@@ -1,0 +1,480 @@
+//FORM 1
+using System.ComponentModel;
+
+namespace iContacts
+{
+    public partial class Form1 : Form
+    {
+        //private List<BaseContact> contacts = new List<BaseContact>();
+        private BindingList<BaseContact> allContacts;
+        //private BindingList<BaseContact> selectedcontact;
+        public Form1()
+        {
+            InitializeComponent();
+            InitializeContacts();
+
+            cmGroup.Items.Add("Friend");
+            cmGroup.Items.Add("Family");
+            cmGroup.Items.Add("Business");
+
+            cmGroup.SelectedIndex = 0;
+
+        }
+
+        private void InitializeContacts()
+        {
+            allContacts = new BindingList<BaseContact>(); //(new List<BaseContact>
+            {
+
+                /*new BaseContact { Name = "John Doe", IsSelected = false },
+                new BaseContact { Name = "Jane Smith", IsSelected = false },
+                new BaseContact { Name = "Alice Johnson", IsSelected = false }*/
+
+                //});
+
+                //selectedcontact = new BindingList<BaseContact>();
+
+                lstContactResult.DataSource = allContacts;
+                lstContactResult.DisplayMember = "Full Name";
+            }
+        }
+
+       /* public class Contact
+        {
+            public string Name { get; set; }
+            public string Phone { get; set; }
+
+
+            public Contact(string name, string phone)
+            {
+                Name = name;
+                Phone = phone;
+            }
+
+            public override string ToString()
+            {
+                return $"{Name}-{Phone}";
+            }
+        }*/
+
+
+
+
+
+
+
+
+       /* private void Form1_Load(object sender, EventArgs e)
+        {
+            Button btnEditing = new Button();
+            btnEditing.Text = "Edit";
+            btnEditing.Location = new Point(10, 100);
+            //btnEditing.Click += BtnEditing_Click;
+            this.Controls.Add(btnEditing);
+
+            Button btnDelete = new Button();
+            btnDelete.Text = "Delete";
+            btnDelete.Location = new Point(10, 130);
+            //btnDelete.Click += BtnDelete_Click;
+            this.Controls.Add(btnDelete);
+
+        }*/
+
+
+
+       /* private void PopulateContactBox()
+
+        {
+            lstContactResult.Items.Clear();
+
+            foreach (var contact in contacts)
+            {
+
+                lstContactResult.Items.Add(contact);
+
+            }
+
+
+        }*/
+
+      /*  private void label2_Click(object sender, EventArgs e)
+        {
+
+        }*/
+
+        private void btnAdd_Click_1(object sender, EventArgs e)
+        {
+            // lets add a code where we get user input
+
+
+            string name = txtName.Text;
+            string phone = txtPhone.Text;
+            
+
+            // select from the group in combobox
+
+            string group = cmGroup.SelectedItem?.ToString();
+
+            // we need an if statment
+
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(phone)
+                && !string.IsNullOrEmpty(group))
+            {
+                // time to create contact
+
+
+                BaseContact contact = null;
+
+                switch (group)
+                {
+
+                    case "Friend":
+                        contact = new FriendContact(name, phone);
+                        break;
+
+
+                    case "Family":
+                        contact = new FamilyContact(name, phone);
+                        break;
+
+                    case "Business":
+                        contact = new BusinessContact(name, phone);
+                        break;
+
+
+
+                }
+
+                if (contact != null)
+                {
+                    allContacts.Add(contact);
+                    //lstContactResult.Items.Add(contact);
+                }
+                else
+                {
+                    MessageBox.Show("Please enter name, phone, and select a group.");
+                }
+
+
+            }
+
+        }
+
+        private void btnEditing_Click(object sender, EventArgs e)
+        {
+            if (lstContactResult.SelectedItem is BaseContact selectedContact)
+            {
+                using (var dialog = new InputDialogForm("Edit Name or Phone Number:"))
+                {
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+
+                        if (dialog.InputType == InputDialogForm.ContactEditedType.Name)
+                        {
+                            selectedContact.Name = dialog.InputValue;
+                        }
+                        else if (dialog.InputType == InputDialogForm.ContactEditedType.PhoneNumber)
+                        {
+                            selectedContact.PhoneNumber = dialog.InputValue;
+                        }
+
+                        /*selectedContact.Name = dialog.InputValue;
+                        selectedContact.PhoneNumber = dialog.InputValue;*/
+
+                        //PopulateContactBox();
+
+                        lstContactResult.DataSource = null;
+                        lstContactResult.DataSource = allContacts;
+                        lstContactResult.DisplayMember = "Name";
+                        lstContactResult.ValueMember = "Phone Number";
+                    }
+                }
+
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (lstContactResult.SelectedItem is BaseContact selectedContact)
+            {
+                allContacts.Remove(selectedContact);
+
+              /*  lstContactResult.ClearSelected();
+                lstContactResult.SelectedIndexChanged -= lstContactResult_SelectedIndexChanged;
+
+                //contacts.Remove(selectedContact);
+
+                lstContactResult.SelectedIndexChanged += lstContactResult_SelectedIndexChanged;
+
+                //contacts.ResetBindings();//PopulateContactBox();
+
+                if (lstContactResult.Items.Count == 0)
+                {
+                    lstContactResult_SelectedIndexChanged(lstContactResult, EventArgs.Empty);
+                }*/
+
+
+
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            allContacts.Clear();
+            txtName.Text = null;
+            txtPhone.Text = null;
+            cmGroup.Text = null;
+        }
+
+        /*private void lstContactResult_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }*/
+    }
+
+}
+
+
+// BASE CONTACT 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace iContacts
+{
+
+    interface MyInterface
+    {
+
+    }
+
+    abstract class BaseContact : MyInterface
+    {
+        public string Name { get; set; }
+        public string PhoneNumber { get; set; }
+
+        // Constructor to initialize Name and PhoneNumber
+        public BaseContact(string name, string phoneNumber)
+        {
+            Name = name;
+            PhoneNumber = phoneNumber;
+        }
+
+        public string FullName => $"{Name} - {PhoneNumber}";
+
+        public abstract string GetContactType();
+
+        public override string ToString()
+        {
+            return $"{Name} - {PhoneNumber}";
+        }
+    }
+}
+
+
+// BUSINESS CONTACT 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace iContacts
+{
+    internal class BusinessContact : BaseContact
+    {
+        public BusinessContact(string name, string phoneNumber) : base(name, phoneNumber)
+        {
+            // Additional initialization for Business contact if needed
+        }
+
+        public override string GetContactType()
+        {
+            return "Business";
+        }
+
+        // Override ToString() to customize string representation
+        public override string ToString()
+        {
+            return $"{GetContactType()}: {Name} - {PhoneNumber}";
+        }
+
+    }
+}
+
+
+// CONTACT
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace iContacts
+{
+    internal class Contact
+    {
+        public string Name { get; set; }
+        public string Phone { get; set; }
+
+        public Contact(string name, string phone)
+        {
+
+            Name = name;
+            Phone = phone;
+
+
+
+        }
+
+        public string GetInfo()
+        {
+            return $"Name: {Name}\nPhone: {Phone}";
+
+
+        }
+    }
+}
+
+
+// FAMILY CONTACT
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace iContacts
+{
+    internal class FamilyContact : BaseContact
+    {
+        public FamilyContact(string name, string phoneNumber) : base(name, phoneNumber)
+        {
+            // Additional initialization for Family contact if needed
+        }
+
+        public override string GetContactType()
+        {
+            return "Family";
+        }
+
+        // Override ToString() to customize string representation
+        public override string ToString()
+        {
+            return $"{GetContactType()}: {Name} - {PhoneNumber}";
+        }
+    }
+}
+
+
+// FRIEND CONTACT 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace iContacts
+{
+    internal class FriendContact : BaseContact
+    {
+        public FriendContact(string name, string phoneNumber) : base(name, phoneNumber)
+        {
+            // Additional initialization for Friend contact if needed
+        }
+
+        public override string GetContactType()
+        {
+            return "Friend";
+        }
+
+        // Override ToString() to customize string representation
+        public override string ToString()
+        {
+            return $"{GetContactType()}: {Name} - {PhoneNumber}";
+        }
+    }
+}
+
+
+
+// INPUT DIALOG
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace iContacts
+{
+    public partial class InputDialogForm : Form
+    {
+        public enum ContactEditedType
+        {
+            Name,
+            PhoneNumber
+        }
+
+        public ContactEditedType InputType { get; private set; }
+        public string InputValue { get; private set; }
+
+        //public string Input { get; private set; }
+        public InputDialogForm(string input)
+        {
+            InitializeComponent();
+            this.Text = input;
+            InputValue = "";
+            InputType = ContactEditedType.Name;
+        }
+
+        private void InputDialogForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            InputValue = txtInput.Text;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+
+        private void rbtnEditName_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbtnEditName.Checked)
+            {
+                InputType = ContactEditedType.Name;
+            }
+        }
+
+        private void rbtnEditPhoneNumber_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbtnEditPhoneNumber.Checked)
+            {
+                InputType = ContactEditedType.PhoneNumber;
+            }
+        }
+    }
+}
+
+
+
+
